@@ -9,9 +9,7 @@
 
 int main(int argc, char* argv[]) {
     
-    // 參數處理省略
     cmdline::parser arg;
-
     arg.add<std::string>("modelPath", 'm', "Path to onnx model.", true, "yolov5.onnx");
     arg.add<std::string>("imagePath", 's', "Data source to be detected.", true, "video.mp4");
     arg.add<std::string>("classNamePath", 'c', "Path to class names file.", true, "coco.names");
@@ -44,7 +42,7 @@ int main(int argc, char* argv[]) {
     
     bool isImage = helpers::isImage(imagePath);
     //std::string sourcePath = imagePath;
-    // 輸出檔案的路徑
+
     std::string outputPath = "";
     if (isImage)
     {
@@ -61,13 +59,12 @@ int main(int argc, char* argv[]) {
     }
 
 
-    // 宣告yolo ddetector
     YOLODetector detector {nullptr};
     cv::Mat image;
     std::vector<Detection> result;
 
     try 
-    {   // 創建目標識別物件
+    {   
         detector = YOLODetector(modelPath, isGPU, cv::Size(640, 640));
         std::cout << "Model was initialized." << std::endl;
     } catch(const std::exception& e)
@@ -93,10 +90,10 @@ int main(int argc, char* argv[]) {
             return -1;
         }
 
-        // 得到影片的資訊每frame為多少width和height
+        
         cv::Size S = cv::Size((int)cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH), 
                       (int)cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT));
-        // 得到每秒有多少frame
+  
         int fps = cap.get(cv::VideoCaptureProperties::CAP_PROP_FPS);
         std::cout << "=============== origianl Video Info =============== " << fps << std::endl;
         std::cout << "Video PROP FRAME (width,height) :" << S << std::endl;
@@ -105,7 +102,6 @@ int main(int argc, char* argv[]) {
 
         cv::VideoWriter writer(outputPath, cv::VideoWriter::fourcc('a', 'v', 'c', '1'), fps, S, true);
         while (true) {
-            // 將frame讀到image中
             bool ret = cap.read(image); 
             if (!ret) {
                 std::cout << "Can't receive frame (stream end?). Exiting ...\n" << std::endl;
@@ -125,18 +121,15 @@ int main(int argc, char* argv[]) {
 
     } else {
         std::cout << "=========== Image detection =========== " << std::endl;
-        // 讀取影像
-        // opencv讀取的影像資訊為BGR，而且為[weight,height,,channels]，只有Python版本的opencv，才是(height,weight)
         image = cv::imread(imagePath);
         std::cout << "=========== original Image Info ============== " <<  std::endl;
         std::cout << "original image " << image.size() << std::endl;
         std::cout << "=============================================== " <<  std::endl;
         
-        // 執行目標偵測
         result = detector.detect(image, confThreshold, iouThreshold);
-        // 視覺化偵測結果
+
         helpers::visualizeDetection(image, result, classNames);
-        // 顯示預測結果
+        
         cv::imshow("result", image);
         cv::imwrite(outputPath, image);
         cv::waitKey(0);
