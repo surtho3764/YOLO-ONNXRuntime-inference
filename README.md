@@ -28,5 +28,5 @@ Run from CLI:
 
 ![image](https://github.com/surtho3764/YOLO-ONNXRuntime-inference/blob/main/demo/426342_result.jpg)
 
-![Video](https://github.com/surtho3764/YOLO-ONNXRuntime-inference/blob/main/demo/4h14w-nmce3.gif)
+![image](https://github.com/surtho3764/YOLO-ONNXRuntime-inference/blob/main/demo/4h14w-nmce3.gif)
 
